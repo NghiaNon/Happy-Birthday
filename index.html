@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Chúc mừng sinh nhật em bé 🎂</title>
+  <meta name="description"
+    content="Một trang web chúc mừng sinh nhật ngọt ngào dành riêng cho người anh yêu thương nhất." />
+  <meta name="theme-color" content="#ffe4ec" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Pacifico&family=Quicksand:wght@500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+  <!-- Nền động -->
+  <div class="bg" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+    <span class="cloud c1"></span>
+    <span class="cloud c2"></span>
+    <span class="cloud c3"></span>
+  </div>
+  <div id="sky-flash" aria-hidden="true"></div>
+  <div id="hearts-layer" aria-hidden="true"></div>
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <canvas id="fx" aria-hidden="true"></canvas>
+
+  <!-- Thanh trên cùng -->
+  <header class="topbar">
+    <ol class="progress" id="progress" aria-label="Tiến trình hành trình">
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ol>
+    <button class="music-btn" id="music-btn" type="button" aria-label="Bật/tắt nhạc" title="Bật/tắt nhạc">
+      <span class="disc" aria-hidden="true">💿</span>
+      <span class="music-label" id="music-label">Nhạc</span>
+    </button>
+  </header>
+
+  <main class="stage" id="stage">
+
+    <!-- 1. HELLO -->
+    <section class="scene active" id="scene-1" aria-labelledby="t1">
+      <h1 id="t1" class="visually-hidden">Lời chào từ anh</h1>
+      <div class="gif-card tilt-l">
+        <span class="badge">💌 Có thư gửi riêng cho <span class="nick"></span></span>
+        <img src="src_video/hello.gif" alt="Anh vẫy tay chào" />
+        <span class="sticker s1">🎀</span><span class="sticker s2">✨</span><span class="sticker s3">🧸</span>
+      </div>
+      <div class="talk">
+        <div class="bubble">
+          <p>Hé lu <b class="nick"></b> của anh! Hôm nay là một ngày <b>siêu cấp đặc biệt</b> của một người <b>siêu cấp
+              dễ thương</b> trên đời này nè...</p>
+        </div>
+        <button class="btn" type="button" data-next>Bấm vào xem nè! ✨</button>
+      </div>
+    </section>
+
+    <!-- 2. WAIT -->
+    <section class="scene" id="scene-2" aria-labelledby="t2">
+      <h2 id="t2" class="visually-hidden">Hồi hộp chờ đợi</h2>
+      <div class="gif-card tilt-r">
+        <span class="tape"></span>
+        <img src="src_video/wait.gif" alt="Anh ngồi đợi ngóng trông" />
+        <span class="sticker s1">⏳</span><span class="sticker s2">💭</span><span class="sticker s3">💗</span>
+      </div>
+      <div class="talk">
+        <div class="bubble">
+          <p>Đợi anh xíu xiu nghen công chúa! Điều bất ngờ to bự đang được chuyển thẳng từ <b>trái tim anh</b> tới em
+            đây...</p>
+          <div class="loader" aria-live="polite">
+            <div class="loader-track">
+              <div class="loader-fill" id="loader-fill"></div>
+            </div>
+            <small id="loader-text">Đang nạp 0% yêu thương...</small>
+          </div>
+        </div>
+        <button class="btn" type="button" data-next id="btn-wait" disabled>Nhanh lên coi tò mò quá rùi nè! ⏱️</button>
+      </div>
+    </section>
+
+    <!-- 3. OÁN TRÁCH -->
+    <section class="scene" id="scene-3" aria-labelledby="t3">
+      <h2 id="t3" class="visually-hidden">Hờn dỗi trêu chọc</h2>
+      <div class="gif-card tilt-l">
+        <span class="tape"></span>
+        <img src="src_video/oantrach.gif" alt="Anh phụng phịu hờn dỗi" />
+        <span class="sticker s1">💢</span><span class="sticker s2">😤</span><span class="sticker s3">🍡</span>
+      </div>
+      <div class="talk">
+        <div class="bubble">
+          <p>Hứ! Em bé <b>ngốc nghếch, đáng ghét.</b></p>
+          <p>Lúc nào cũng bảo không quan tâm gì đến mình 😤</p>
+        </div>
+        <div class="btn-row">
+          <button class="btn" type="button" data-next>Nhưng mà anh vẫn yêu bé nhấttt 💕</button>
+          <button class="btn btn-ghost" type="button" id="btn-runaway">Em bé đáng ghét 🙈</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. DỖ DÀNH -->
+    <section class="scene" id="scene-4" aria-labelledby="t4">
+      <h2 id="t4" class="visually-hidden">Dỗ dành ngọt ngào</h2>
+      <div class="gif-card tilt-r">
+        <span class="tape"></span>
+        <img src="src_video/dodanh.gif" alt="Anh dỗ dành ôm ấp" />
+        <span class="sticker s1">🫶</span><span class="sticker s2">🌸</span><span class="sticker s3">💖</span>
+      </div>
+      <div class="talk">
+        <div class="bubble">
+          <p>Hì hì, ai lại nỡ giận em bé bao giờ! Cả thế giới ngoài kia có làm em mệt thì cứ <b>về
+              đây</b>, anh dỗ dành và cưng chiều em nhất trần đời!</p>
+        </div>
+        <button class="btn" type="button" data-next>Em bé muốn quà gì nào? 🎁</button>
+      </div>
+    </section>
+
+    <!-- 5. XOA ĐẦU -->
+    <section class="scene" id="scene-5" aria-labelledby="t5">
+      <h2 id="t5" class="visually-hidden">Cưng chiều xoa đầu</h2>
+      <div class="gif-card tilt-l">
+        <span class="tape"></span>
+        <img src="src_video/xoa-dau.gif" alt="Anh xoa đầu em bé" />
+        <span class="sticker s1">🥰</span><span class="sticker s2">✨</span><span class="sticker s3">🌷</span>
+      </div>
+      <div class="talk">
+        <div class="bubble">
+          <p>Cho anh xoa đầu bé iu một cái nà~
+            <br>Chúc em tuổi mới luôn <b>xinh đẹp</b>, cười thật nhiều.
+            <br>
+          </p>
+        </div>
+        <button class="btn" type="button" data-next>Hôm nay sinh nhật em, cho em ước 1 điều ước 🎂</button>
+      </div>
+    </section>
+
+    <!-- 6. DUYỆT ĐIỀU ƯỚC -->
+    <section class="scene" id="scene-6" aria-labelledby="t6">
+      <h2 id="t6" class="visually-hidden">Duyệt điều ước</h2>
+      <div class="gif-card tilt-r" id="duyet-card">
+        <span class="tape"></span>
+        <img src="src_video/duyet.gif" alt="Anh đóng dấu duyệt" />
+        <div class="stamp" id="stamp" aria-hidden="true">
+          <b>ĐÃ DUYỆT!</b>
+          <small>APPROVED 100% · KHÔNG BÀN CÃI</small>
+        </div>
+        <span class="sticker s1">📜</span><span class="sticker s2">⭐</span><span class="sticker s3">💮</span>
+      </div>
+      <div class="talk">
+        <form class="bubble wish-box" id="wish-form" autocomplete="off">
+          <p>Em muốn ước gì nào?</p>
+          <div class="chips" role="group" aria-label="Chọn điều ước">
+            <label class="chip"><input type="checkbox" value="Được anh dẫn đi ăn ngon và chở đi dạo mỗi tuần" /><span>🍜
+                Đi ăn ngon mỗi tuần</span></label>
+            <label class="chip"><input type="checkbox" value="Anh không bao giờ giận em quá 5 phút" /><span>⏱️ Đi dạo
+                phố mỗi tuần</span></label>
+            <label class="chip"><input type="checkbox" value="Được ôm anh thật lâu mỗi khi em buồn" /><span>🫂 Ôm thật
+                em bé lâuuuu</span></label>
+          </div>
+          <label class="wish-input">
+            <span class="visually-hidden">Điều ước riêng của em</span>
+            <textarea id="wish-text" rows="1" maxlength="160" placeholder="✍️ Hoặc tự gõ điều ước của em..."></textarea>
+          </label>
+          <button class="btn" type="submit" id="btn-wish">Gửi điều ước cho anh 💌</button>
+          <p class="approved-msg" id="approved-msg" hidden>Duyệt luôn! Ước gì cũng chiều hết, <b>lệnh của công chúa là
+              số một!</b> 👑</p>
+        </form>
+        <button class="btn" type="button" data-next id="btn-after-wish" hidden>Đi thổi nến mừng sinh nhật thôi nào!
+          🎂✨</button>
+      </div>
+    </section>
+
+    <!-- 7. THỔI NẾN SINH NHẬT (MÀN RIÊNG) -->
+    <section class="scene scene-cake" id="scene-7" aria-labelledby="t7">
+      <h2 id="t7" class="visually-hidden">Thổi nến sinh nhật</h2>
+
+      <div class="bubble bubble-cake">
+        <p id="cake-instruction">Điều ước đã được anh duyệt rồi nè! Bây giờ <b class="nick"></b> hãy <b>nhắm mắt ước một
+            điều</b> rồi thổi nến nha! 🕯️✨</p>
+      </div>
+
+      <div class="grand-cake-wrap">
+        <div class="grand-cake" id="grand-cake" role="button" tabindex="0" aria-label="Chạm vào nến để thổi">
+          <!-- Vầng hào quang nến lung linh -->
+          <div class="candle-halo" id="candle-halo"></div>
+
+          <!-- Hàng 3 ngọn nến lung linh -->
+          <div class="candles-row" id="candles-row">
+            <div class="candle c-left"><i class="flame"></i><i class="smoke"></i></div>
+            <div class="candle c-mid"><i class="flame"></i><i class="smoke"></i></div>
+            <div class="candle c-right"><i class="flame"></i><i class="smoke"></i></div>
+          </div>
+
+          <!-- Tầng trên -->
+          <div class="tier t-top">
+            <span class="strawberry s-top-1">🍓</span>
+            <span class="strawberry s-top-2">🍓</span>
+          </div>
+          <!-- Tầng giữa -->
+          <div class="tier t-mid">
+            <span class="strawberry s-mid-1">🍓</span>
+            <span class="strawberry s-mid-2">🍓</span>
+            <span class="strawberry s-mid-3">🍓</span>
+          </div>
+          <!-- Tầng đáy -->
+          <div class="tier t-bottom"></div>
+          <!-- Đĩa bánh -->
+          <div class="plate"></div>
+        </div>
+      </div>
+
+      <div class="cake-controls">
+        <p class="cake-hint" id="cake-hint">👇 Chạm vào bánh hoặc bấm nút để thổi nến</p>
+        <button class="btn btn-blow" id="btn-blow" type="button">Thổi nến nè 💨🎂</button>
+        <button class="btn btn-grand-finale" id="btn-to-finale" type="button" data-next hidden>Mở món quà cuối cùng nè!
+          🎆🎁</button>
+      </div>
+    </section>
+
+    <!-- 8. FINALE (MÓN QUÀ CUỐI CÙNG) -->
+    <section class="scene finale" id="scene-8" aria-labelledby="t8">
+      <div class="finale-left">
+        <h2 id="t8" class="finale-title"><span class="ft-line">Happy Birthday</span> <span
+            class="script nick-name"></span></h2>
+
+        <div class="gif-card" id="finale-gif">
+          <span class="tape"></span>
+          <img src="src_video/quay-tron.gif" alt="Anh ôm em quay vòng tròn" />
+          <span class="sticker s1">🎂</span><span class="sticker s2">🎈</span><span class="sticker s3">💖</span><span
+            class="sticker s4">🎁</span>
+        </div>
+
+        <div class="finale-actions">
+          <button class="btn btn-heart" type="button" id="btn-hearts">Bắn tim 💘<span class="count" id="heart-count"
+              hidden>0</span></button>
+          <button class="btn btn-fireworks" type="button" id="btn-fireworks">Bắn pháo hoa 🎆</button>
+          <button class="btn btn-ghost" type="button" id="btn-letter">Mở thư 📜</button>
+          <button class="btn btn-ghost btn-icon" type="button" id="btn-replay" aria-label="Xem lại từ đầu"
+            title="Xem lại từ đầu">🔁</button>
+        </div>
+      </div>
+
+      <!-- Cuộn thư -->
+      <div class="letter-dock" id="letter-dock">
+        <div class="scroll" id="scroll">
+          <div class="rod rod-top"><i></i></div>
+          <div class="paper-wrap">
+            <div class="paper">
+              <div class="paper-inner">
+                <h3 class="ln">Gửi <span class="nick"></span> của anh,</h3>
+                <p class="ln">Cảm ơn em vì đã xuất hiện và là một phần tuyệt vời nhất trong cuộc đời anh.</p>
+                <p class="ln">Chúc cho tuổi mới của em tràn ngập tiếng cười, may mắn và hạnh phúc.</p>
+                <p class="ln">Và mong rằng sinh nhật năm nay, năm sau và thật nhiều năm sau nữa, người đứng cạnh em vẫn
+                  luôn là anh.</p>
+                <div class="wish-recap ln" id="wish-recap" hidden>
+                  <span>📜 Điều ước đã được anh duyệt:</span>
+                  <em id="wish-recap-text"></em>
+                </div>
+                <p class="ln sign">Yêu em rất nhiều! <span class="script" id="sign"></span></p>
+              </div>
+            </div>
+          </div>
+          <div class="rod rod-bottom"><i></i></div>
+          <button class="scroll-seal" id="scroll-seal" type="button"><span class="seal-wax"
+              aria-hidden="true">💗</span>Mở thư</button>
+        </div>
+        <button class="btn btn-ghost scroll-close" id="scroll-close" type="button">Cuộn thư lại 💗</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+
+</html>
