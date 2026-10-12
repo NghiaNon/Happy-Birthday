@@ -227,17 +227,17 @@ const Fireworks = (() => {
     const tx = txRatio * W;
     const ty = tyRatio * H;
     const distY = H + 10 - ty;
-    const frames = Math.max(22, Math.min(36, Math.floor(distY / (22 * dpr))));
+    const frames = Math.max(18, Math.min(30, Math.floor(distY / (24 * dpr))));
 
     rockets.push({
       x: sx,
-      y: H + 10,
+      y: H + 15,
       tx, ty,
       vx: (tx - sx) / frames,
-      vy: (ty - (H + 10)) / frames,
+      vy: (ty - (H + 15)) / frames,
       color: color || pick(ALL_COLORS),
       trail: [],
-      maxTrail: 10,
+      maxTrail: isTouch ? 4 : 7,
       life: frames,
       type, // "heart", "willow", "sphere"
     });
@@ -245,18 +245,22 @@ const Fireworks = (() => {
   }
 
   // 2. Nổ pháo hoa tại (x, y)
-  function explode(x, y, baseColor, type = "sphere", count = 90) {
+  function explode(x, y, baseColor, type = "sphere", customCount = null) {
     Sound.firework();
     flashSky();
+
+    // Giới hạn số tia sáng để đảm bảo siêu mượt trên điện thoại (60fps)
+    const baseSparks = isTouch ? 26 : 38;
+    const count = customCount || baseSparks;
 
     // Vòng hào quang phát sáng nở bung
     shockwaves.push({
       x, y,
       r: 4 * dpr,
-      maxR: rand(50, 85) * dpr,
-      alpha: 0.9,
+      maxR: rand(35, 60) * dpr,
+      alpha: 0.85,
       color: baseColor || pick(ALL_COLORS),
-      width: 4 * dpr
+      width: (isTouch ? 2.5 : 3.5) * dpr
     });
 
     if (type === "heart") {
@@ -264,23 +268,23 @@ const Fireworks = (() => {
       const heartCount = Math.floor(count * 0.95);
       const palette = PALETTES.heart;
       for (let i = 0; i < heartCount; i++) {
+        if (sparks.length >= (isTouch ? 85 : 160)) break;
         const t = (i / heartCount) * Math.PI * 2;
-        // Đường cong trái tim tham số
         const hx = 16 * Math.pow(Math.sin(t), 3);
         const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-        const spread = rand(0.55, 0.78) * dpr;
+        const spread = rand(0.5, 0.72) * dpr;
         sparks.push({
           x, y,
-          vx: hx * 0.35 * spread,
-          vy: hy * 0.35 * spread,
+          vx: hx * 0.32 * spread,
+          vy: hy * 0.32 * spread,
           trail: [],
-          maxTrail: 7,
-          color: Math.random() < 0.28 ? "#ffffff" : pick(palette),
+          maxTrail: isTouch ? 3 : 5,
+          color: Math.random() < 0.25 ? "#ffffff" : pick(palette),
           alpha: 1,
-          decay: rand(0.012, 0.018),
-          size: rand(3.2, 5.2) * dpr,
-          gravity: 0.065 * dpr,
-          friction: 0.972,
+          decay: rand(0.015, 0.024),
+          size: rand(2.4, 4.0) * dpr,
+          gravity: 0.06 * dpr,
+          friction: 0.97,
           twinkle: true,
         });
       }
@@ -288,19 +292,20 @@ const Fireworks = (() => {
       // Pháo hoa mưa sao vàng thác nước rủ xuống
       const palette = PALETTES.gold;
       for (let i = 0; i < count; i++) {
+        if (sparks.length >= (isTouch ? 85 : 160)) break;
         const angle = rand(0, Math.PI * 2);
-        const speed = rand(2.5, 9.5) * dpr;
+        const speed = rand(2.2, 7.5) * dpr;
         sparks.push({
           x, y,
           vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 1.5 * dpr,
+          vy: Math.sin(angle) * speed - 1.2 * dpr,
           trail: [],
-          maxTrail: 11,
+          maxTrail: isTouch ? 4 : 7,
           color: Math.random() < 0.25 ? "#ffffff" : pick(palette),
           alpha: 1,
-          decay: rand(0.008, 0.014),
-          size: rand(3, 4.8) * dpr,
-          gravity: 0.095 * dpr,
+          decay: rand(0.011, 0.018),
+          size: rand(2.2, 3.8) * dpr,
+          gravity: 0.085 * dpr,
           friction: 0.965,
           twinkle: true,
         });
@@ -309,21 +314,22 @@ const Fireworks = (() => {
       // Chùm pháo hoa tròn sao băng rực rỡ 360 độ
       const palette = pick([PALETTES.vibrant, PALETTES.rainbow, PALETTES.heart]);
       for (let i = 0; i < count; i++) {
+        if (sparks.length >= (isTouch ? 85 : 160)) break;
         const angle = rand(0, Math.PI * 2);
-        const speed = rand(3, 13) * dpr;
+        const speed = rand(2.5, 9.5) * dpr;
         sparks.push({
           x, y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           trail: [],
-          maxTrail: 8,
-          color: Math.random() < 0.22 ? "#ffffff" : (baseColor || pick(palette)),
+          maxTrail: isTouch ? 3 : 6,
+          color: Math.random() < 0.2 ? "#ffffff" : (baseColor || pick(palette)),
           alpha: 1,
-          decay: rand(0.012, 0.022),
-          size: rand(3, 5.5) * dpr,
-          gravity: 0.115 * dpr,
-          friction: 0.962,
-          twinkle: Math.random() < 0.7,
+          decay: rand(0.016, 0.026),
+          size: rand(2.2, 4.2) * dpr,
+          gravity: 0.095 * dpr,
+          friction: 0.965,
+          twinkle: Math.random() < 0.6,
         });
       }
     }
@@ -331,52 +337,56 @@ const Fireworks = (() => {
     if (!raf) raf = requestAnimationFrame(loop);
   }
 
-  // 3. Đại bác pháo giấy kim tuyến 3D tung bay (Confetti Cannons)
-  function blastCannons(power = 22) {
-    const leftX = 0.04 * W, rightX = 0.96 * W, bottomY = H + 10;
-    const count = Math.floor(rand(55, 75));
+  // 3. Đại bác pháo giấy kim tuyến nhẹ nhàng, tinh tế (Confetti Cannons)
+  function blastCannons(power = 18) {
+    if (confetti.length >= (isTouch ? 45 : 80)) return;
+    const leftX = 0.06 * W, rightX = 0.94 * W, bottomY = H + 20;
+    const count = isTouch ? Math.floor(rand(10, 14)) : Math.floor(rand(16, 22));
     // Đại bác góc trái bắn chéo sang phải lên cao
     for (let i = 0; i < count; i++) {
-      const angle = -Math.PI / 3 + rand(-0.35, 0.35);
-      const speed = rand(15, power) * dpr;
+      const angle = -Math.PI / 3 + rand(-0.25, 0.25);
+      const speed = rand(14, power) * dpr;
       addConfettiPiece(leftX, bottomY, Math.cos(angle) * speed, Math.sin(angle) * speed);
     }
     // Đại bác góc phải bắn chéo sang trái lên cao
     for (let i = 0; i < count; i++) {
-      const angle = -Math.PI * 2 / 3 + rand(-0.35, 0.35);
-      const speed = rand(15, power) * dpr;
+      const angle = -Math.PI * 2 / 3 + rand(-0.25, 0.25);
+      const speed = rand(14, power) * dpr;
       addConfettiPiece(rightX, bottomY, Math.cos(angle) * speed, Math.sin(angle) * speed);
     }
     if (!raf) raf = requestAnimationFrame(loop);
   }
 
   function addConfettiPiece(x, y, vx, vy) {
+    if (confetti.length >= (isTouch ? 50 : 90)) return;
     confetti.push({
       x, y, vx, vy,
-      w: rand(9, 17) * dpr,
-      h: rand(12, 24) * dpr,
+      w: rand(5, 8.5) * dpr,
+      h: rand(7, 12) * dpr,
       color: pick(ALL_COLORS),
       rot: rand(0, Math.PI * 2),
-      vrot: rand(-0.18, 0.18),
+      vrot: rand(-0.14, 0.14),
       tilt: rand(0, Math.PI * 2),
-      vtilt: rand(0.08, 0.22),
+      vtilt: rand(0.08, 0.18),
       wobble: rand(0, 6.28),
-      life: rand(140, 240),
-      gravity: 0.22 * dpr,
+      life: rand(75, 125),
+      gravity: 0.2 * dpr,
     });
   }
 
-  function burstConfetti(xr, yr, count = 75, angle = -Math.PI / 2, spread = Math.PI * 2, power = 17) {
+  function burstConfetti(xr, yr, count = null, angle = -Math.PI / 2, spread = Math.PI * 2, power = 14) {
+    if (confetti.length >= (isTouch ? 45 : 80)) return;
     const cx = xr * W, cy = yr * H;
-    for (let i = 0; i < count; i++) {
+    const n = count || (isTouch ? 16 : 24);
+    for (let i = 0; i < n; i++) {
       const a = angle + rand(-spread / 2, spread / 2);
-      const v = rand(power * 0.4, power) * dpr;
+      const v = rand(power * 0.45, power) * dpr;
       addConfettiPiece(cx, cy, Math.cos(a) * v, Math.sin(a) * v);
     }
     if (!raf) raf = requestAnimationFrame(loop);
   }
 
-  // Animation Loop chính
+  // Animation Loop chính - Tối ưu 60fps mượt mà
   function loop() {
     c.clearRect(0, 0, W, H);
 
@@ -398,66 +408,42 @@ const Fireworks = (() => {
           c.lineTo(r.trail[t].x, r.trail[t].y);
         }
         c.strokeStyle = r.color;
-        c.lineWidth = 4 * dpr;
+        c.lineWidth = (isTouch ? 2.5 : 3.5) * dpr;
         c.lineCap = "round";
         c.stroke();
       }
 
       // Đầu tên lửa trắng sáng
       c.beginPath();
-      c.arc(r.x, r.y, 4 * dpr, 0, Math.PI * 2);
+      c.arc(r.x, r.y, 3.5 * dpr, 0, Math.PI * 2);
       c.fillStyle = "#ffffff";
-      c.shadowColor = r.color;
-      c.shadowBlur = 12 * dpr;
       c.fill();
-
-      // Thả tàn lửa nhỏ phía sau
-      if (Math.random() < 0.6) {
-        sparks.push({
-          x: r.x + rand(-3, 3) * dpr,
-          y: r.y + rand(3, 8) * dpr,
-          vx: rand(-1, 1) * dpr,
-          vy: rand(0.5, 2.5) * dpr,
-          trail: [],
-          maxTrail: 3,
-          color: "#ffd166",
-          alpha: 0.8,
-          decay: 0.05,
-          size: rand(2, 3.5) * dpr,
-          gravity: 0.1 * dpr,
-          friction: 0.95,
-          twinkle: true,
-        });
-      }
 
       if (r.life <= 0) {
         rockets.splice(i, 1);
-        explode(r.tx, r.ty, r.color, r.type, 95);
+        explode(r.tx, r.ty, r.color, r.type);
       }
     }
 
     // B. Vẽ Shockwave Rings (Vòng hào quang nổ)
     for (let i = shockwaves.length - 1; i >= 0; i--) {
       const sw = shockwaves[i];
-      sw.r += (sw.maxR - sw.r) * 0.16 + 1.2 * dpr;
-      sw.alpha *= 0.88;
-      if (sw.alpha < 0.02 || sw.r >= sw.maxR) {
+      sw.r += (sw.maxR - sw.r) * 0.18 + 1.2 * dpr;
+      sw.alpha *= 0.86;
+      if (sw.alpha < 0.03 || sw.r >= sw.maxR) {
         shockwaves.splice(i, 1);
         continue;
       }
-      c.save();
       c.beginPath();
       c.arc(sw.x, sw.y, sw.r, 0, Math.PI * 2);
       c.strokeStyle = sw.color;
-      c.globalAlpha = sw.alpha;
+      c.globalAlpha = sw.alpha * 0.7;
       c.lineWidth = sw.width * sw.alpha;
-      c.shadowColor = sw.color;
-      c.shadowBlur = 10 * dpr;
       c.stroke();
-      c.restore();
+      c.globalAlpha = 1;
     }
 
-    // C. Vẽ Sparks chùm sao pháo hoa với vệt sáng lộng lẫy (Motion Trails)
+    // C. Vẽ Sparks chùm sao pháo hoa (Không dùng shadowBlur lặp để chống giật lag)
     for (let i = sparks.length - 1; i >= 0; i--) {
       const s = sparks[i];
       s.vx *= s.friction;
@@ -475,7 +461,6 @@ const Fireworks = (() => {
         continue;
       }
 
-      c.save();
       c.globalAlpha = Math.max(0, s.alpha);
 
       // Vệt sáng kéo dài (motion trail)
@@ -486,42 +471,39 @@ const Fireworks = (() => {
           c.lineTo(s.trail[t].x, s.trail[t].y);
         }
         c.strokeStyle = s.color;
-        c.lineWidth = s.size * 0.85;
+        c.lineWidth = s.size * 0.75;
         c.lineCap = "round";
         c.stroke();
       }
 
       // Hạt đầu phát sáng
       c.beginPath();
-      const rad = s.size * (s.twinkle && Math.random() < 0.35 ? 1.5 : 1);
+      const rad = s.size * (s.twinkle && Math.random() < 0.3 ? 1.3 : 1);
       c.arc(s.x, s.y, rad, 0, Math.PI * 2);
       c.fillStyle = s.color;
-      c.shadowColor = s.color;
-      c.shadowBlur = 10 * dpr;
       c.fill();
 
       // Tâm trắng chói sáng
       c.beginPath();
-      c.arc(s.x, s.y, Math.max(1, rad * 0.4), 0, Math.PI * 2);
+      c.arc(s.x, s.y, Math.max(0.8, rad * 0.45), 0, Math.PI * 2);
       c.fillStyle = "#ffffff";
       c.fill();
-
-      c.restore();
     }
+    c.globalAlpha = 1;
 
-    // D. Vẽ Pháo giấy kim tuyến 3D (3D tumbling confetti)
+    // D. Vẽ Pháo giấy kim tuyến 3D (3D tumbling confetti - Gọn nhẹ, thanh lịch)
     for (let i = confetti.length - 1; i >= 0; i--) {
       const p = confetti[i];
       p.vy += p.gravity;
       p.vx *= 0.985;
-      p.x += p.vx + Math.sin(p.wobble) * 0.6 * dpr;
+      p.x += p.vx + Math.sin(p.wobble) * 0.45 * dpr;
       p.y += p.vy;
       p.rot += p.vrot;
       p.tilt += p.vtilt;
       p.wobble += 0.08;
       p.life--;
 
-      if (p.life <= 0 || p.y > H + 50) {
+      if (p.life <= 0 || p.y > H + 40) {
         confetti.splice(i, 1);
         continue;
       }
@@ -529,11 +511,9 @@ const Fireworks = (() => {
       c.save();
       c.translate(p.x, p.y);
       c.rotate(p.rot);
-      c.scale(1, Math.cos(p.tilt)); // 3D Flip
+      c.scale(1, Math.cos(p.tilt)); // 3D Flip nhẹ nhàng
       c.fillStyle = p.color;
-      c.globalAlpha = Math.min(1, p.life / 30);
-      c.shadowColor = "rgba(0,0,0,0.12)";
-      c.shadowBlur = 4 * dpr;
+      c.globalAlpha = Math.min(0.9, p.life / 25);
       c.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
       c.restore();
     }
@@ -546,63 +526,39 @@ const Fireworks = (() => {
     }
   }
 
-  // ĐẠI TIỆC PHÁO HOA 6 GIAI ĐOẠN HOÀNH TRÁNG (>4.5 GIÂY)
+  // ĐẠI TIỆC PHÁO HOA GỌN GÀNG, ĐẸP MẮT & KHÔNG GÂY LAG ĐIỆN THOẠI
   function grandShow() {
     resize();
-    blastCannons(23);
+    // Giai đoạn 1 (0ms): 1 Trái tim hồng + 1 Mưa sao vàng + Pháo giấy tinh tế
+    launchRocket(0.35, 0.38, 0.28, "#ff007f", "heart");
+    launchRocket(0.65, 0.62, 0.28, "#ffd700", "willow");
+    blastCannons(20);
 
-    // Giai đoạn 1 (0ms): 2 quả tên lửa vút lên nổ Trái tim hồng & Mưa sao vàng
-    launchRocket(0.3, 0.35, 0.28, "#ff007f", "heart");
-    launchRocket(0.7, 0.65, 0.28, "#ffd700", "willow");
-
-    // Giai đoạn 2 (400ms): Thổi thêm đại bác confetti từ 2 góc bay vồng lên cao
+    // Giai đoạn 2 (1100ms): 1 quả pháo hoa xanh rực rỡ + chút confetti nhẹ
     setTimeout(() => {
-      blastCannons(25);
-      launchRocket(0.5, 0.5, 0.22, "#3a86ff", "sphere");
-    }, 400);
+      launchRocket(0.5, 0.5, 0.24, "#3a86ff", "sphere");
+      burstConfetti(0.5, 0.32, isTouch ? 16 : 24, -Math.PI / 2, Math.PI * 2, 14);
+    }, 1100);
 
-    // Giai đoạn 3 (950ms): 2 quả pháo hoa chéo cánh nổ lung linh rực rỡ
-    setTimeout(() => {
-      launchRocket(0.18, 0.28, 0.35, "#ff006e", "sphere");
-      launchRocket(0.82, 0.72, 0.35, "#06d6a0", "willow");
-      burstConfetti(0.5, 0.3, 80, -Math.PI / 2, Math.PI * 2, 16);
-    }, 950);
-
-    // Giai đoạn 4 (1700ms): Quả pháo hoa khổng lồ hình trái tim rực đỏ giữa trời
+    // Giai đoạn 3 (2300ms): 1 quả pháo hoa hình trái tim khổng lồ màu đỏ thắm
     setTimeout(() => {
       launchRocket(0.5, 0.5, 0.2, "#ff0055", "heart");
-    }, 1700);
-
-    // Giai đoạn 5 (2500ms): Thác nước vàng cascade lung linh rủ xuống
-    setTimeout(() => {
-      launchRocket(0.32, 0.38, 0.26, "#ffd700", "willow");
-      launchRocket(0.68, 0.62, 0.26, "#ffbe0b", "willow");
-      blastCannons(21);
-    }, 2500);
-
-    // Giai đoạn 6 (3400ms): Trận địa pháo hoa kết màn đại tiệc rực rỡ
-    setTimeout(() => {
-      launchRocket(0.25, 0.3, 0.25, "#8338ec", "sphere");
-      launchRocket(0.5, 0.5, 0.18, "#ff007f", "heart");
-      launchRocket(0.75, 0.7, 0.25, "#ffbe0b", "sphere");
-      burstConfetti(0.5, 0.35, 110, -Math.PI / 2, Math.PI * 2, 18);
-    }, 3400);
+    }, 2300);
   }
 
-  // Khởi động đại tiệc pháo hoa & duy trì ambient pháo hoa định kỳ
+  // Khởi động đại tiệc pháo hoa & duy trì ambient pháo hoa định kỳ (giãn cách nhẹ nhàng)
   function startFinale() {
     grandShow();
     stopAmbient();
     ambientTimer = setInterval(() => {
-      if (current === 7 && !document.hidden) {
-        const sx = rand(0.2, 0.8);
-        const tx = sx + rand(-0.12, 0.12);
-        const ty = rand(0.18, 0.38);
-        const types = ["heart", "sphere", "willow", "heart"];
-        const t = pick(types);
-        launchRocket(sx, tx, ty, null, t);
+      if (current === 7 && !document.hidden && rockets.length === 0) {
+        const sx = rand(0.3, 0.7);
+        const tx = sx + rand(-0.1, 0.1);
+        const ty = rand(0.2, 0.36);
+        const types = ["heart", "sphere", "willow"];
+        launchRocket(sx, tx, ty, null, pick(types));
       }
-    }, 2300);
+    }, 4500);
   }
 
   function stopAmbient() {
@@ -624,11 +580,12 @@ const Fireworks = (() => {
     stopAmbient,
     fireAt(clientX, clientY) {
       resize();
+      if (rockets.length >= 2) return;
       const txRatio = clientX / innerWidth;
       const tyRatio = clientY / innerHeight;
-      const sxRatio = Math.max(0.1, Math.min(0.9, txRatio + rand(-0.08, 0.08)));
-      launchRocket(sxRatio, txRatio, tyRatio, pick(ALL_COLORS), Math.random() < 0.5 ? "heart" : "sphere");
-      burstConfetti(txRatio, tyRatio, 35, -Math.PI / 2, Math.PI * 2, 12);
+      const sxRatio = Math.max(0.15, Math.min(0.85, txRatio + rand(-0.06, 0.06)));
+      launchRocket(sxRatio, txRatio, tyRatio, pick(ALL_COLORS), Math.random() < 0.6 ? "heart" : "sphere");
+      burstConfetti(txRatio, tyRatio, isTouch ? 10 : 16, -Math.PI / 2, Math.PI * 2, 11);
     }
   };
 })();
